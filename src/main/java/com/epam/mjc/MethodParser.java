@@ -24,10 +24,12 @@ public class MethodParser {
      * @return {@link MethodSignature} object filled with parsed values from source string
      */
     public MethodSignature parseFunction(String signatureString) {
-        String[] arr = new String[] {"public", "private", "protected"};
         StringTokenizer strTok = new StringTokenizer(signatureString, "()");
         StringTokenizer contractWithoutParamTok = new StringTokenizer(strTok.nextToken(), " ");
-        StringTokenizer argumentsTok = new StringTokenizer(strTok.nextToken(), ",");
+        StringTokenizer argumentsTok = null;
+        if (strTok.hasMoreTokens()) {
+            argumentsTok = new StringTokenizer(strTok.nextToken(), ",");
+        }
 
         String accessModifier,  returnType, methodName;
         List<String> arguments = new ArrayList<>();
@@ -35,12 +37,12 @@ public class MethodParser {
         if (contractWithoutParamTok.countTokens() == 3) {
             accessModifier = contractWithoutParamTok.nextToken();
         } else {
-            accessModifier = "";
+            accessModifier = null;
         }
         returnType = contractWithoutParamTok.nextToken();
         methodName = contractWithoutParamTok.nextToken();
 
-        if (argumentsTok.countTokens() > 0) {
+        if (argumentsTok != null) {
             while(argumentsTok.hasMoreTokens()) {
                 arguments.add(argumentsTok.nextToken().trim());
             }
