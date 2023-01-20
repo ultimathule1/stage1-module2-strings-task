@@ -1,5 +1,9 @@
 package com.epam.mjc;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 public class MethodParser {
 
     /**
@@ -20,6 +24,40 @@ public class MethodParser {
      * @return {@link MethodSignature} object filled with parsed values from source string
      */
     public MethodSignature parseFunction(String signatureString) {
-        throw new UnsupportedOperationException("You should implement this method.");
+        String[] arr = new String[] {"public", "private", "protected"};
+        StringTokenizer strTok = new StringTokenizer(signatureString, "()");
+        StringTokenizer contractWithoutParamTok = new StringTokenizer(strTok.nextToken(), " ");
+        StringTokenizer argumentsTok = new StringTokenizer(strTok.nextToken(), ",");
+
+        String accessModifier,  returnType, methodName;
+        List<String> arguments = new ArrayList<>();
+
+        if (contractWithoutParamTok.countTokens() == 3) {
+            accessModifier = contractWithoutParamTok.nextToken();
+        } else {
+            accessModifier = "";
+        }
+        returnType = contractWithoutParamTok.nextToken();
+        methodName = contractWithoutParamTok.nextToken();
+
+        if (argumentsTok.countTokens() > 0) {
+            while(argumentsTok.hasMoreTokens()) {
+                arguments.add(argumentsTok.nextToken().trim());
+            }
+        }
+
+        List<MethodSignature.Argument> argList = new ArrayList<>();
+
+        //for(int i = 0; i < arguments.size(); i++) {
+        for(String argument : arguments) {
+            StringTokenizer stTemp = new StringTokenizer(argument, " ");
+            argList.add(new MethodSignature.Argument(stTemp.nextToken(), stTemp.nextToken()));
+        }
+
+        MethodSignature methodSignature = new MethodSignature(methodName, argList);
+        methodSignature.setAccessModifier(accessModifier);
+        methodSignature.setReturnType(returnType);
+
+        return methodSignature;
     }
 }
